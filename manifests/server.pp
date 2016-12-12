@@ -17,6 +17,7 @@ class ganglia::server (
   $data_source    = 'localhost',
   $data_sources   = undef,
   $trusted_hosts  = 'localhost',
+  $username       = $ganglia::params::username,
 ) inherits ganglia::params {
   if $grid == '' {
     $gridname = $cluster
@@ -37,11 +38,20 @@ class ganglia::server (
     require  => Package['ganglia-gmetad'],
     notify   => Service['gmetad'],
   }
-  service {'gmetad':
-    ensure   => running,
-    enable   => true,
-    provider => redhat,
-    require  => File['/etc/ganglia/gmetad.conf'],
+  if $facts['os']['release']['major'] == '7' {
+    service {'gmetad':
+      ensure   => running,
+      enable   => true,
+      provider => systemd,
+      require  => File['/etc/ganglia/gmetad.conf'],
+    }
+  } else {
+    service {'gmetad':
+      ensure   => running,
+      enable   => true,
+      provider => redhat,
+      require  => File['/etc/ganglia/gmetad.conf'],
+    }
   }
 }
 
