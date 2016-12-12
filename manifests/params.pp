@@ -16,4 +16,5 @@ class ganglia::params {
   $package_ensure         = '3.6.0-1.el6.srce'
   $udphosts               = undef
   $override_hostname      = undef
+  $username               = 'nobody'
 }
